@@ -1,9 +1,10 @@
-import { recipes } from "./recipes";
+import { recipes } from "./recipes.js";
 const display = document.querySelector("#Recipe");
 const filterName = document.querySelector("#filter-name");
 const filterPrepTime = document.querySelector("#filter-preptime");
 const filterCookTime = document.querySelector("#filter-cooktime");
-const choiceIngredient = document.querySelector("#spaghetti");
+const choiceIngredient = document.getElementsByName("choice");
+const choiceBtn = document.querySelector("#valide-choice");
 const recipesList = [];
 const refreshRecipe = () => {
     display.innerHTML = "";
@@ -76,23 +77,38 @@ filterCookTime.addEventListener('input', () => {
         newDivTitle.appendChild(newDivDescription);
     });
 });
-choiceIngredient.addEventListener('change', () => {
+choiceBtn.addEventListener('click', () => {
     display.innerHTML = "";
-    let filter = choiceIngredient.value.toLocaleLowerCase();
-    console.log(filter);
-    let search = recipesList.filter(el => el.cookTime.toLocaleLowerCase().includes(filter));
-    console.log(search);
-    search.forEach(recette => {
-        let newDivTitle = document.createElement('div');
-        let newDivDescription = document.createElement('div');
-        newDivTitle.className = "bg-dark rounded p-3";
-        newDivDescription.className = "bg-dark rounded p-3";
-        newDivTitle.textContent += `${recette.name} cook time : ${recette.cookTime}`;
-        for (const instruction of recette.instructions) {
-            newDivDescription.textContent += instruction;
-        }
-        display.appendChild(newDivTitle);
-        newDivTitle.appendChild(newDivDescription);
-    });
+    let filter = choice();
+    for (let i = 0; i < choice().length; i++) {
+        recipesList.forEach(recette => {
+            let newDivTitle = document.createElement('div');
+            let newDivDescription = document.createElement('div');
+            newDivTitle.className = "bg-dark rounded p-3";
+            newDivDescription.className = "bg-dark rounded p-3";
+            for (const ingredient of recette.ingredients) {
+                if (ingredient.name == filter[i]) {
+                    for (const instruction of recette.instructions) {
+                        newDivDescription.textContent += instruction;
+                    }
+                    newDivTitle.textContent += recette.name;
+                    console.log(recette.name);
+                }
+                else {
+                }
+            }
+            display.appendChild(newDivTitle);
+            newDivTitle.appendChild(newDivDescription);
+        });
+    }
 });
+const choice = () => {
+    let ingredient = [];
+    for (let choice of choiceIngredient) {
+        if (choice.checked) {
+            ingredient.push(choice.value);
+        }
+    }
+    return ingredient;
+};
 refreshRecipe();
